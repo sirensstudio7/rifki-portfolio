@@ -1,0 +1,7 @@
+- make header position fixed position
+- make text on about section bigger
+- remove anything that relate to lovable
+- add work page
+- add media page
+- add music page
+- add code page

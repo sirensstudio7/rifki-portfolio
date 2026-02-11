@@ -1,0 +1,234 @@
+@keyframes scanlines {
+  from { background-position: 0 0px; }
+  to { background-position: 0 4px; }
+}
+
+@keyframes blinking {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 520px;
+  margin: 0 auto;
+  align-self: center;
+  background-color: #0a0a0a;
+  overflow: hidden;
+  font: 1rem "Inconsolata", monospace;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.titleBar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 12px;
+  background-color: #2d2d2d;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.trafficLights {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trafficLights button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.trafficLights button:hover {
+  filter: brightness(1.15);
+}
+
+.trafficLights .close {
+  background-color: #ff5f57;
+}
+
+.trafficLights .minimize {
+  background-color: #febc2e;
+}
+
+.trafficLights .maximize {
+  background-color: #28c840;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.titleIcon {
+  width: 16px;
+  height: 16px;
+  color: #5b9bd5;
+  flex-shrink: 0;
+}
+
+.overlay {
+  z-index: 200;
+  position: absolute;
+  left: -2.5%;
+  right: -2.5%;
+  bottom: 0;
+  top: 0;
+  background-image: linear-gradient(#55995C .1em, transparent .1em);
+  background-size: 100% 6px;
+  animation: scanlines 16ms infinite steps(4, start);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.overlay::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 2.5%;
+  left: 2.5%;
+  background: inherit;
+  border-radius: 2.5% / 50%;
+  opacity: 0.25;
+  z-index: 200;
+}
+
+.content {
+  margin: 24px 28px;
+  z-index: 1;
+  width: 100%;
+  flex: 0 0 auto;
+  align-self: flex-start;
+}
+
+.line {
+  color: #63DE6F;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 2px;
+  text-align: left;
+}
+
+.prefix {
+  color: #63DE6F;
+}
+
+.cursor {
+  animation: blinking 800ms infinite;
+  margin-left: -5px;
+  color: #63DE6F;
+}
+
+.input {
+  background: transparent;
+  border: none;
+  font: 1rem "Inconsolata", monospace;
+  color: #63DE6F;
+  caret-color: transparent;
+  outline: none;
+  min-width: 120px;
+}
+
+.input:focus {
+  outline: none;
+  border: none;
+}
+
+.response {
+  color: #63DE6F;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.response table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.response th,
+.response td {
+  border: 1px solid #63DE6F;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.response th {
+  color: #63DE6F;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .screen {
+    height: 420px;
+    max-width: 100%;
+    font-size: 0.875rem;
+  }
+
+  .titleBar {
+    height: 32px;
+    padding: 0 10px;
+  }
+
+  .title {
+    font-size: 11px;
+  }
+
+  .titleIcon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .trafficLights {
+    left: 10px;
+  }
+
+  .trafficLights button {
+    width: 10px;
+    height: 10px;
+  }
+
+  .content {
+    margin: 16px 12px;
+  }
+
+  .line {
+    font-size: 13px;
+    word-break: break-all;
+  }
+
+  .input {
+    font-size: 13px;
+    min-width: 60px;
+  }
+
+  .response {
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  .response th,
+  .response td {
+    padding: 4px 8px;
+  }
+}
