@@ -95,7 +95,7 @@ export const SiteNav = () => {
             </div>
             <a
               href="#"
-              className={cn(baseClass, "text-center whitespace-normal break-words bg-primary text-black border-primary hover:bg-primary/90 mt-auto")}
+              className={cn(baseClass, "text-[16px] h-[40px] py-0 text-center whitespace-normal break-words bg-primary text-black border-primary hover:bg-primary/90 mt-auto inline-flex items-center justify-center")}
               onClick={() => setOpen(false)}
             >
               Let&apos;s talk

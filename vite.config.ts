@@ -8,7 +8,11 @@ export default defineConfig({
     host: "127.0.0.1",
     port: 8080,
     hmr: {
-      overlay: false,
+      host: "127.0.0.1",
+      overlay: true,
+    },
+    watch: {
+      usePolling: true,
     },
   },
   plugins: [react()],

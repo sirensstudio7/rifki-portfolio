@@ -61,8 +61,8 @@ const Music = () => {
             className="text-left hover:opacity-80 transition-opacity"
           >
             <div className="aspect-square bg-white mb-3 rounded-sm" />
-            <p className="text-white font-mono text-sm">{item.artist}</p>
-            <p className="text-white font-mono text-sm mt-1">{item.track}</p>
+            <p className="text-white font-mono text-[16px]">{item.artist}</p>
+            <p className="text-white font-mono text-[16px] mt-1">{item.track}</p>
           </button>
         ))}
       </div>

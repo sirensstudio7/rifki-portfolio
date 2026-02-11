@@ -55,7 +55,7 @@ const Work = () => {
                       <h2 className="text-base font-bold text-foreground mb-3">
                         {item.title}
                       </h2>
-                      <p className="text-sm text-muted-foreground leading-[1.4]">
+                      <p className="text-[16px] text-muted-foreground leading-[1.4]">
                         Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
                         odit aut fugit, sed quia consequuntur magni dolores eos qui
                         ratione voluptatem sequi nesciunt.
