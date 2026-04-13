@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { HoverGlitchText } from "@/components/HoverGlitchText";
 
 const navLinks = [
   { to: "/", label: "Home" },
@@ -21,10 +22,17 @@ const inactiveClass =
 
 export const SiteNav = () => {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  const isWorkDetailPage = pathname.startsWith("/work/");
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-[100px] flex items-center justify-between px-4 md:px-6 bg-background">
+      <nav
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 h-[100px] flex items-center justify-between px-4 md:px-6 bg-background transition-opacity duration-300",
+          isWorkDetailPage && "opacity-0 pointer-events-none"
+        )}
+      >
         <a href="/" className="w-12 h-12 md:w-16 md:h-16 shrink-0 flex items-center justify-center" aria-label="Home">
           <img src="/rifki-logo.svg" alt="Rifki" className="w-10 h-10 md:w-14 md:h-14 object-contain" />
         </a>
@@ -33,7 +41,7 @@ export const SiteNav = () => {
         <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-6">
           {navLinks.map(({ to, label }) =>
             to.startsWith("#") ? (
-              <a key={label} href={to} className={cn(baseClass, inactiveClass)}>
+              <a key={label} href={to} className={cn(baseClass, "md:rounded-[4px]", inactiveClass)}>
                 {label}
               </a>
             ) : (
@@ -41,9 +49,9 @@ export const SiteNav = () => {
                 key={label}
                 to={to}
                 end={to === "/"}
-                className={({ isActive }) => cn(baseClass, isActive ? activeClass : inactiveClass)}
+                className={({ isActive }) => cn(baseClass, "md:rounded-[4px]", isActive ? activeClass : inactiveClass)}
               >
-                {label}
+                <HoverGlitchText text={label} />
               </NavLink>
             )
           )}
@@ -51,10 +59,12 @@ export const SiteNav = () => {
 
         {/* Desktop: Let's talk */}
         <a
-          href="#"
-          className="hidden md:inline-flex text-sm rounded-full px-5 py-2 bg-primary text-black hover:bg-primary/90 transition-colors shrink-0"
+          href="https://cal.com/rifki-firdaus-yxboki"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden md:inline-flex items-center h-[38px] text-sm rounded-[4px] px-5 py-2 bg-primary text-black hover:bg-primary/90 transition-colors shrink-0"
         >
-          Let&apos;s talk
+          <HoverGlitchText text="Let's talk!" />
         </a>
 
         {/* Mobile: hamburger */}
@@ -75,7 +85,7 @@ export const SiteNav = () => {
                   <a
                     key={label}
                     href={to}
-                    className={cn(baseClass, "text-[48px] text-center whitespace-normal break-words", inactiveClass)}
+                    className={cn(baseClass, "rounded-[4px] text-[48px] text-center whitespace-normal break-words", inactiveClass)}
                     onClick={() => setOpen(false)}
                   >
                     {label}
@@ -85,20 +95,22 @@ export const SiteNav = () => {
                     key={label}
                     to={to}
                     end={to === "/"}
-                    className={({ isActive }) => cn(baseClass, "text-[48px] text-center whitespace-normal break-words", isActive ? activeClass : inactiveClass)}
+                    className={({ isActive }) => cn(baseClass, "rounded-[4px] text-[48px] text-center whitespace-normal break-words", isActive ? activeClass : inactiveClass)}
                     onClick={() => setOpen(false)}
                   >
-                    {label}
+                    <HoverGlitchText text={label} className="inline-block" />
                   </NavLink>
                 )
               )}
             </div>
             <a
-              href="#"
-              className={cn(baseClass, "text-[16px] h-[40px] py-0 text-center whitespace-normal break-words bg-primary text-black border-primary hover:bg-primary/90 mt-auto inline-flex items-center justify-center")}
+              href="https://cal.com/rifki-firdaus-yxboki"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={cn(baseClass, "rounded-[4px] text-[16px] h-[40px] py-0 text-center whitespace-normal break-words bg-primary text-black border-primary hover:bg-primary/90 mt-auto inline-flex items-center justify-center")}
               onClick={() => setOpen(false)}
             >
-              Let&apos;s talk
+              <HoverGlitchText text="Let's talk!" />
             </a>
           </SheetContent>
         </Sheet>

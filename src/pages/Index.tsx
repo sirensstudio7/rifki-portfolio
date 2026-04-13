@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Instagram, Github } from "lucide-react";
 import gsap from "gsap";
 import { SiteNav } from "@/components/SiteNav";
+import { HoverGlitchText } from "@/components/HoverGlitchText";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const DribbbleIcon = () => (
@@ -17,9 +19,36 @@ const XIcon = () => (
 );
 
 const Index = () => {
+  const profileCardRef = useRef<HTMLDivElement>(null);
   const aboutTextRef = useRef<HTMLDivElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  const handleAbyysClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const page = pageRef.current;
+    if (!page) {
+      window.location.href = "/abyys.html";
+      return;
+    }
+    gsap.to(page, {
+      opacity: 0,
+      duration: 0.5,
+      ease: "power2.inOut",
+      onComplete: () => {
+        window.location.href = "/abyys.html";
+      },
+    });
+  };
 
   useEffect(() => {
+    const card = profileCardRef.current;
+    if (card) {
+      gsap.fromTo(
+        card,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+      );
+    }
     const el = aboutTextRef.current;
     if (!el) return;
     const paragraphs = el.querySelectorAll("p");
@@ -32,32 +61,33 @@ const Index = () => {
         duration: 0.7,
         stagger: 0.15,
         ease: "power2.out",
+        delay: 0.15,
       }
     );
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={pageRef} className="min-h-screen bg-background">
       <SiteNav />
 
       {/* Main Content */}
       <main className="max-w-2xl mx-auto px-6 pt-[120px]">
         {/* Profile Card */}
-        <div className="bg-card rounded-2xl p-6 pb-4 md:pb-6 mb-12">
+        <div ref={profileCardRef} className="bg-card rounded-[4px] p-6 pb-4 md:pb-6 mb-8">
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            <div className="group w-[100px] h-[100px] sm:w-16 sm:h-16 shrink-0 overflow-hidden rounded-full">
-            <Avatar className="w-[100px] h-[100px] sm:w-16 sm:h-16">
+            <div className="group w-[100px] h-[100px] sm:w-16 sm:h-16 shrink-0 overflow-hidden rounded-[100%]">
+            <Avatar className="w-[100px] h-[100px] sm:w-16 sm:h-16 rounded-[100%]">
               <AvatarImage
                 src="/pp.jpeg"
                 alt="Rifk"
-                className="transition-transform duration-300 ease-out group-hover:scale-150"
+                className="rounded-full transition-transform duration-300 ease-out group-hover:scale-150"
               />
               <AvatarFallback className="bg-secondary text-muted-foreground text-xl">R</AvatarFallback>
             </Avatar>
             </div>
             <div className="min-w-0 flex flex-col gap-0.5 text-center sm:text-left">
               <h1 className="text-[20px] font-semibold text-foreground">Rifk</h1>
-              <p className="text-[16px] text-muted-foreground">Design Engineer</p>
+              <p className="text-[16px] text-muted-foreground">Digital Product Designer</p>
             </div>
           </div>
 
@@ -90,12 +120,20 @@ const Index = () => {
             </a>
             </div>
             <div className="flex items-center gap-3">
-              <button className="border border-border text-foreground text-sm px-5 py-2 rounded-full hover:bg-secondary transition-colors">
-                Hire Me
-              </button>
-              <button className="bg-primary text-black text-[16px] h-[40px] px-5 rounded-full hover:bg-primary/90 transition-colors inline-flex items-center justify-center">
-                Let's talk!
-              </button>
+              <a
+                href="mailto:rifkifir7@gmail.com"
+                className="border border-border text-foreground text-[16px] md:text-[14px] h-[40px] px-5 rounded-[4px] hover:bg-secondary transition-colors inline-flex items-center justify-center whitespace-nowrap"
+              >
+                <HoverGlitchText text="Hire Me" />
+              </a>
+              <a
+                href="https://cal.com/rifki-firdaus-yxboki"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-primary text-black text-[16px] md:text-[14px] h-[40px] px-5 rounded-[4px] hover:bg-primary/90 hover:text-black transition-colors inline-flex items-center justify-center whitespace-nowrap"
+              >
+                <HoverGlitchText text="Let's talk!" />
+              </a>
             </div>
           </div>
         </div>
@@ -104,43 +142,43 @@ const Index = () => {
         <section className="mb-16">
           <div
             ref={aboutTextRef}
-            className="space-y-5 text-[24px] md:text-[32px] leading-[1.4] text-muted-foreground"
+            className="space-y-5 text-[14px] md:text-[17px] leading-[1.55] text-muted-foreground"
           >
             <p>
-              I'm a <span className="text-foreground font-medium">design engineer</span> who builds{" "}
-              <span className="text-foreground font-medium">products</span> and{" "}
-              <span className="text-foreground font-medium">brands</span> from the ground up. I focus on{" "}
-              <span className="text-foreground font-medium">motion</span>,{" "}
-              <span className="text-foreground font-medium">interaction design</span>, and{" "}
-              <span className="text-foreground font-medium">visual aesthetics</span> to create engaging
-              digital experiences.
+              I'm a <span className="text-foreground font-medium">Digital Product Designer</span> focused on helping brands and businesses grow in the digital space and achieve their goals through thoughtful design and strong visual direction. I care about <span className="text-foreground font-medium">clarity</span>, <span className="text-foreground font-medium">structure</span>, and the kind of precision where <span className="text-foreground font-medium">every pixel has a reason to exist</span>.
             </p>
 
             <p>
-              Currently working on <span className="text-foreground font-medium">freelance projects</span>{" "}
-              and building <span className="text-foreground font-medium">tools</span> that merge{" "}
-              <span className="text-foreground font-medium">design</span> and{" "}
-              <span className="text-foreground font-medium">engineering</span>. I love experimenting with{" "}
-              <span className="text-foreground font-medium">new technologies</span> and pushing the
-              boundaries of what's possible on the web.
+              For me, <span className="text-foreground font-medium">design is not decoration</span>. It is how a brand speaks, moves, and positions itself. It is how <span className="text-foreground font-medium">ideas turn into trust</span>.
             </p>
 
             <p>
-              When I'm not designing or coding, you can find me{" "}
-              <span className="text-foreground font-medium">making music</span>,{" "}
-              <span className="text-foreground font-medium">exploring art</span>, or diving into{" "}
-              <span className="text-foreground font-medium">creative side projects</span> that keep me
-              inspired and learning.
+              I shape interfaces on the frontend through experimentation and intuition, refining layouts and details until everything feels balanced and intentional. <span className="text-foreground font-medium">Clean structure. Strong hierarchy. No noise. Just purpose.</span>
             </p>
 
-            <div className="!mt-[160px] flex justify-center">
-            <button
-              type="button"
-              className="bg-background text-foreground text-sm px-5 py-3 rounded-full border border-border hover:bg-secondary transition-colors"
-            >
-              Go To The Abyys
-            </button>
-          </div>
+            <p>
+              I collaborate with founders and teams to turn ideas into <span className="text-foreground font-medium">focused, engaging digital products</span> that not only look sharp, but actually work.
+            </p>
+
+            <p>
+              Outside of work, I <span className="text-foreground font-medium">make music</span>, <span className="text-foreground font-medium">explore art</span>, and dive into creative projects that keep my perspective fresh. <span className="text-foreground font-medium">Creating, in any form, is what drives me.</span>
+            </p>
+
+            <div className="!mt-[80px] flex flex-wrap justify-center gap-3">
+              <Link
+                to="/work"
+                className="bg-primary text-black text-sm px-5 py-3 rounded-[4px] hover:bg-primary/90 transition-colors inline-flex items-center justify-center"
+              >
+                <HoverGlitchText text="See Work" />
+              </Link>
+              <a
+                href="/abyys.html"
+                onClick={handleAbyysClick}
+                className="bg-background text-foreground text-sm px-5 py-3 rounded-[4px] border border-border hover:bg-secondary transition-colors inline-block"
+              >
+                <HoverGlitchText text="Sit & Mourn" />
+              </a>
+            </div>
           </div>
         </section>
       </main>

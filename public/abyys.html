@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Ocean Simulator</title>
+    <link rel="icon" type="image/png" href="/browser-icon.png" />
+    <style>
+        html { background: #000; }
+        body { margin: 0; overflow: hidden; opacity: 0; background: #000; transition: opacity 1s ease-out; }
+        body.abyys-ready { opacity: 1; }
+        canvas { display: block; pointer-events: none; position: relative; z-index: 0; }
+        .ui-layer { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
+        .ui-layer > * { pointer-events: auto; }
+        .back-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            font-family: system-ui, sans-serif;
+            font-size: 22px;
+            color: #fff;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            pointer-events: auto;
+            transition: opacity 0.2s;
+        }
+        .back-btn { opacity: 0.5; }
+        .back-btn:hover { opacity: 0.8; }
+        .fullscreen-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border: none;
+            border-radius: 4px;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+            opacity: 0.5;
+        }
+        .fullscreen-btn:hover { opacity: 0.8; }
+        .fullscreen-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; }
+        .music-controls {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .play-pause-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .play-pause-btn:hover {
+            border-color: rgba(255,255,255,0.10);
+        }
+        .play-pause-btn svg { width: 22px; height: 22px; fill: currentColor; }
+        .volume-control {
+            display: flex;
+            align-items: center;
+        }
+        .volume-control input[type="range"] {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            outline: none;
+        }
+        .volume-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+        .volume-control input[type="range"]::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            border: none;
+        }
+        .visit-counter {
+            position: absolute;
+            top: 60px;
+            left: 16px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            font-family: system-ui, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui-layer">
+        <a href="/" class="back-btn" id="back-btn" aria-label="Back">←</a>
+        <button type="button" class="fullscreen-btn" id="fullscreen-btn" aria-label="Fullscreen" title="Fullscreen">
+            <svg id="fullscreen-icon-expand" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            <svg id="fullscreen-icon-exit" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V8m0 0h3a2 2 0 0 1 2 2v3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+        <div class="music-controls">
+            <button type="button" class="play-pause-btn" id="btn-play" aria-label="Play" title="Play">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button type="button" class="play-pause-btn" id="btn-pause" aria-label="Pause" title="Pause" style="display:none">
+                <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+            </button>
+            <div class="volume-control">
+                <input type="range" id="volume-slider" min="0" max="100" value="100" aria-label="Volume" title="Volume">
+            </div>
+        </div>
+        <div class="visit-counter" id="visit-counter" aria-live="polite"></div>
+    </div>
+    <audio id="ocean-audio" preload="metadata">
+        <source src="/Vills%20-%2017.17.mp3" type="audio/mpeg">
+    </audio>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Water.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Sky.js"></script>
+    <script>
+(function () {
+    'use strict';
+
+    var scene, camera, renderer, water, controls, sky;
+    var waterTimeUniform;
+    var timeStep = 0.4 / 60;
+    var sunDirection = new THREE.Vector3();
+    var moonColorHex = 0xFCB747;
+    var config = {
+        exposure: 0.5,
+        elevation: 0.3,
+        azimuth: 180,
+        azimuthMobile: 200,
+        waterColor: 0x355548,
+        distortionScale: 3.9,
+        waterNormalsSize: 256,
+        pixelRatioMax: 2,
+        cameraZStart: 100,
+        cameraZMin: 52,
+        zoomSpeed: 0.022,
+        mobileBreakpoint: 768,
+        fovDesktop: 55,
+        fovMobile: 64,
+        cameraYDesktop: 30,
+        cameraYMobile: 42
+    };
+
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a1628);
+
+        camera = new THREE.PerspectiveCamera(config.fovDesktop, window.innerWidth / window.innerHeight, 1, 20000);
+        camera.position.set(30, config.cameraYDesktop, config.cameraZStart);
+        applyMobileFraming();
+
+        updateSunPosition();
+
+        var pixelRatio = Math.min(window.devicePixelRatio || 1, config.pixelRatioMax);
+        renderer = new THREE.WebGLRenderer({ antialias: false });
+        renderer.setPixelRatio(pixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = config.exposure;
+        document.body.appendChild(renderer.domElement);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enabled = false;
+        controls.maxPolarAngle = Math.PI * 0.495;
+        controls.target.set(0, 10, 0);
+        controls.minDistance = 40;
+        controls.maxDistance = 200;
+
+        var waterGeo = new THREE.PlaneGeometry(10000, 10000);
+        new THREE.TextureLoader().load(
+            'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/waternormals.jpg',
+            function (tex) {
+                tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+                water = new THREE.Water(waterGeo, {
+                    textureWidth: config.waterNormalsSize,
+                    textureHeight: config.waterNormalsSize,
+                    waterNormals: tex,
+                    sunDirection: new THREE.Vector3().copy(sunDirection),
+                    sunColor: 0xFCB747,
+                    waterColor: config.waterColor,
+                    distortionScale: config.distortionScale,
+                    fog: false
+                });
+                water.rotation.x = -Math.PI / 2;
+                water.position.y = -8;
+                scene.add(water);
+                water.material.uniforms['sunDirection'].value.copy(sunDirection);
+                water.material.uniforms['sunColor'].value.setHex(moonColorHex);
+                waterTimeUniform = water.material.uniforms['time'];
+            }
+        );
+
+        sky = new THREE.Sky();
+        sky.scale.setScalar(10000);
+        scene.add(sky);
+        var su = sky.material.uniforms;
+        su['turbidity'].value = 0.8;
+        su['rayleigh'].value = 0.15;
+        su['mieCoefficient'].value = 0.003;
+        su['mieDirectionalG'].value = 0.8;
+        updateSunPosition();
+
+        scene.environment = new THREE.PMREMGenerator(renderer).fromScene(sky).texture;
+
+        window.addEventListener('resize', onResize);
+        requestAnimationFrame(animate);
+
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                document.body.classList.add('abyys-ready');
+            });
+        });
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        if (waterTimeUniform) waterTimeUniform.value += timeStep;
+        if (water && water.material.uniforms['sunColor'])
+            water.material.uniforms['sunColor'].value.setHex(moonColorHex);
+        var z = camera.position.z;
+        var move = config.zoomSpeed * (z - config.cameraZMin) / (config.cameraZStart - config.cameraZMin);
+        camera.position.z = Math.max(z - move, config.cameraZMin);
+        camera.lookAt(controls.target);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    function updateSunPosition() {
+        var isMobile = window.innerWidth < config.mobileBreakpoint;
+        var azimuth = isMobile ? config.azimuthMobile : config.azimuth;
+        var sun = new THREE.Vector3();
+        var phi = THREE.Math.degToRad(90 - config.elevation);
+        var theta = THREE.Math.degToRad(azimuth);
+        sun.setFromSphericalCoords(1, phi, theta);
+        sunDirection.copy(sun).normalize();
+        if (sky && sky.material.uniforms['sunPosition'])
+            sky.material.uniforms['sunPosition'].value.copy(sun);
+        if (water && water.material.uniforms['sunDirection'])
+            water.material.uniforms['sunDirection'].value.copy(sunDirection);
+    }
+
+    function applyMobileFraming() {
+        var isMobile = window.innerWidth < config.mobileBreakpoint;
+        camera.fov = isMobile ? config.fovMobile : config.fovDesktop;
+        camera.position.y = isMobile ? config.cameraYMobile : config.cameraYDesktop;
+        camera.updateProjectionMatrix();
+        updateSunPosition();
+    }
+
+    function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        applyMobileFraming();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    init();
+})();
+
+(function () {
+    var audio = document.getElementById('ocean-audio');
+    var btnPlay = document.getElementById('btn-play');
+    var btnPause = document.getElementById('btn-pause');
+    if (!audio || !btnPlay || !btnPause) return;
+
+    var fadeDuration = 400;
+    var fadeRaf = null;
+
+    function fadeOut(then) {
+        if (fadeRaf) cancelAnimationFrame(fadeRaf);
+        var startVol = audio.volume;
+        var startTime = performance.now();
+        function tick(now) {
+            var t = Math.min((now - startTime) / fadeDuration, 1);
+            audio.volume = Math.max(0, startVol * (1 - t));
+            if (t < 1) {
+                fadeRaf = requestAnimationFrame(tick);
+            } else {
+                fadeRaf = null;
+                audio.pause();
+                audio.volume = 1;
+                if (then) then();
+            }
+        }
+        fadeRaf = requestAnimationFrame(tick);
+    }
+
+    function fadeIn() {
+        if (fadeRaf) cancelAnimationFrame(fadeRaf);
+        audio.currentTime = 2;
+        audio.volume = 0;
+        audio.play();
+        var startTime = performance.now();
+        function tick(now) {
+            var t = Math.min((now - startTime) / fadeDuration, 1);
+            audio.volume = t;
+            if (t < 1) fadeRaf = requestAnimationFrame(tick);
+            else fadeRaf = null;
+        }
+        fadeRaf = requestAnimationFrame(tick);
+    }
+
+    btnPlay.addEventListener('click', function () {
+        btnPlay.style.display = 'none';
+        btnPause.style.display = 'flex';
+        fadeIn();
+    });
+    btnPause.addEventListener('click', function () {
+        btnPause.style.display = 'none';
+        btnPlay.style.display = 'flex';
+        fadeOut();
+    });
+    audio.addEventListener('ended', function () {
+        audio.volume = 1;
+        btnPause.style.display = 'none';
+        btnPlay.style.display = 'flex';
+    });
+
+    var volumeSlider = document.getElementById('volume-slider');
+    if (volumeSlider) {
+        volumeSlider.addEventListener('input', function () {
+            audio.volume = this.value / 100;
+        });
+    }
+
+    var backBtn = document.getElementById('back-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            fadeOut(function () { window.location.href = '/'; });
+        });
+    }
+
+    (function fullscreen() {
+        var btn = document.getElementById('fullscreen-btn');
+        var iconExpand = document.getElementById('fullscreen-icon-expand');
+        var iconExit = document.getElementById('fullscreen-icon-exit');
+        if (!btn) return;
+        function isFullscreen() {
+            return !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
+        }
+        function setIcon(expanded) {
+            if (iconExpand) iconExpand.style.display = expanded ? 'none' : 'block';
+            if (iconExit) iconExit.style.display = expanded ? 'block' : 'none';
+            btn.setAttribute('aria-label', expanded ? 'Exit fullscreen' : 'Fullscreen');
+            btn.setAttribute('title', expanded ? 'Exit fullscreen' : 'Fullscreen');
+        }
+        function enterFullscreen() {
+            var el = document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen();
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+            else if (el.msRequestFullscreen) el.msRequestFullscreen();
+        }
+        function exitFullscreen() {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+        }
+        btn.addEventListener('click', function () {
+            if (isFullscreen()) exitFullscreen();
+            else enterFullscreen();
+        });
+        document.addEventListener('fullscreenchange', function () { setIcon(isFullscreen()); });
+        document.addEventListener('webkitfullscreenchange', function () { setIcon(isFullscreen()); });
+    })();
+
+    setTimeout(function () {
+        fadeIn();
+        btnPlay.style.display = 'none';
+        btnPause.style.display = 'flex';
+    }, 1200);
+})();
+
+(function visitCounter() {
+    var el = document.getElementById('visit-counter');
+    if (!el) return;
+    fetch('https://api.countapi.xyz/hit/rifk-abyys/chill')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var n = data && typeof data.value === 'number' ? data.value : 0;
+            el.textContent = n === 1 ? '1 person chilling here' : n + ' people chilling here';
+        })
+        .catch(function () { el.textContent = ''; });
+})();
+    </script>
+</body>
+</html>

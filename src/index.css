@@ -52,6 +52,16 @@
     @apply border-border;
   }
 
+  *:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  *:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
   body {
     @apply bg-background text-foreground font-mono;
     font-family: 'JetBrains Mono', monospace;
@@ -65,4 +75,319 @@
   html::-webkit-scrollbar {
     display: none;
   }
+}
+
+@property --flowColorStop {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: false;
+}
+
+@layer components {
+  .flow-chips-wrapper {
+    --flow-base-border: hsl(0 0% 23%);
+    --flow-active: hsl(183 66% 67%);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    align-items: center;
+    justify-content: start;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .flow-chip {
+    padding: 0.4rem 0.9rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: hsl(0 0% 96%);
+    border: 1px solid var(--flow-base-border);
+    background-image: linear-gradient(hsl(0 0% 14%), hsl(0 0% 9%));
+    z-index: 1;
+  }
+
+  .flow-chip.active {
+    color: hsl(0 0% 8%);
+    border-color: var(--flow-active);
+    background-color: var(--flow-active);
+    background-image: none;
+    box-shadow: 0 0 0.55rem color-mix(in oklab, var(--flow-active) 75%, transparent);
+  }
+
+  .flow-link-wrapper {
+    --flow-link-height: 2px;
+    --flow-link-width: 2rem;
+    width: var(--flow-link-width);
+    display: grid;
+    place-items: center;
+  }
+
+  .flow-link-wrapper > * {
+    grid-area: 1 / -1;
+  }
+
+  .flow-link {
+    width: 100%;
+    height: var(--flow-link-height);
+    background-color: var(--flow-base-border);
+    background-image: linear-gradient(
+      to right,
+      var(--flow-base-border),
+      var(--flow-active) var(--flowColorStop),
+      transparent var(--flowColorStop)
+    );
+    animation: flowColorStopToRight 2s linear infinite;
+  }
+
+  .flow-switch {
+    --flow-switch-width: 18%;
+    width: var(--flow-switch-width);
+    height: calc(var(--flow-link-height) + 4px);
+    border-radius: 9999px;
+    background-color: var(--flow-active);
+    box-shadow: 0 0 0.45rem var(--flow-active);
+    justify-self: start;
+    transform: translateX(-100%);
+    animation: flowSwitchToRight 2s linear infinite;
+  }
+}
+
+@keyframes flowSwitchToRight {
+  to {
+    transform: translateX(calc(var(--flow-link-width) + 100%));
+  }
+}
+
+@keyframes flowColorStopToRight {
+  to {
+    --flowColorStop: calc(100% + 18%);
+  }
+}
+
+/* Work detail — Core Club “coming soon” maze mini-game */
+.workdetail-maze-game {
+  touch-action: pan-y;
+  width: 100%;
+  max-width: none;
+}
+
+.workdetail-maze-game [data-maze-cont] {
+  display: grid;
+  width: 100%;
+  grid-template-rows: minmax(548px, 58vh) minmax(120px, 1fr);
+  background: hsl(var(--background));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Full viewport height: board row grows, controls stay at bottom */
+.workdetail-maze-game--fill-dvh {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.workdetail-maze-game--fill-dvh [data-maze-cont] {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) minmax(112px, auto);
+}
+
+.workdetail-maze-mbox {
+  position: relative;
+  height: 100%;
+  min-height: 548px;
+  background: hsl(var(--background));
+  display: grid;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.workdetail-maze-board {
+  position: absolute;
+  width: 760px;
+  height: 548px;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.workdetail-maze-level-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 506px;
+  z-index: 4;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px 10px;
+  pointer-events: none;
+}
+
+.workdetail-maze-timer-inline {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.workdetail-maze-timer-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+@media (min-width: 768px) {
+  .workdetail-maze-timer-label {
+    font-size: 11px;
+  }
+}
+
+.workdetail-maze-timer-value {
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+}
+
+@media (min-width: 768px) {
+  .workdetail-maze-timer-value {
+    font-size: 1rem;
+  }
+}
+
+.workdetail-maze-level {
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.workdetail-maze-thingie,
+.workdetail-maze-home {
+  position: absolute;
+  top: 200px;
+  left: 200px;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+}
+
+.workdetail-maze-emo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border-radius: 40px;
+  font-size: 26px;
+  line-height: 1;
+  text-align: center;
+  /* Keep emoji glyphs visually uniform across faces / symbols */
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+}
+
+.workdetail-maze-barrier {
+  position: absolute;
+  background: #fff;
+}
+
+.workdetail-maze-barrier--top {
+  top: 40px;
+  left: 40px;
+  width: 680px;
+  height: 2px;
+}
+
+.workdetail-maze-barrier--bottom {
+  top: 480px;
+  left: 40px;
+  width: 680px;
+  height: 2px;
+}
+
+.workdetail-maze-controls {
+  height: 100%;
+  background: hsl(var(--background));
+  display: grid;
+  padding-bottom: 12px;
+}
+
+.workdetail-maze-buttons {
+  width: 156px;
+  height: 104px;
+  background: hsl(var(--background));
+  align-self: center;
+  justify-self: center;
+  display: grid;
+  grid-template-rows: 52px 52px;
+  grid-template-columns: 52px 52px 52px;
+}
+
+.workdetail-maze-btn {
+  width: 44px;
+  height: 44px;
+  border: 2px #fff solid;
+  align-self: center;
+  justify-self: center;
+  cursor: pointer;
+  border-radius: 6px;
+  display: grid;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  transition: background-color 0.08s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.workdetail-maze-btn:active {
+  background-color: #fff;
+}
+
+.workdetail-maze-btn:active .workdetail-maze-chevron {
+  color: #000;
+}
+
+.workdetail-maze-btn:focus {
+  outline: none;
+}
+
+.workdetail-maze-btn[data-maze-bu] {
+  grid-column-start: 2;
+}
+
+.workdetail-maze-btn[data-maze-bd] {
+  grid-column-start: 2;
+  grid-row-start: 2;
+}
+
+.workdetail-maze-btn[data-maze-bl] {
+  grid-column-start: 1;
+  grid-row-start: 2;
+}
+
+.workdetail-maze-btn[data-maze-br] {
+  grid-column-start: 3;
+  grid-row-start: 2;
+}
+
+.workdetail-maze-chevron {
+  height: 16px;
+  width: 16px;
+  align-self: center;
+  justify-self: center;
+  color: #fff;
+  font-size: 16px;
+  line-height: 16px;
+  text-align: center;
 }

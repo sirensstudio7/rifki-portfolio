@@ -42,12 +42,10 @@ const Music = () => {
       <div className="max-w-2xl pl-0 pr-4 md:px-6 mr-auto md:mx-auto w-full">
         <div className="text-[16px] md:text-[20px] text-[#8F8F8F] mb-8 text-left">
           <p className="mb-8">
-            Sed ut <span className="font-bold text-[#8F8F8F]">perspiciatis</span> unde omnis iste
-            natus error sit.
+            Music is another part of how I express myself.
           </p>
           <p>
-            voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque
-            ipsa quae ab illo inventore veritatis.
+            I explore different genres and sounds, always curious about how emotion and energy translate through music. I like experimenting, blending influences, and letting the process evolve naturally.
           </p>
         </div>
       </div>
@@ -60,7 +58,7 @@ const Music = () => {
             onClick={() => setCurrentTrackIndex(i)}
             className="text-left hover:opacity-80 transition-opacity"
           >
-            <div className="aspect-square bg-white mb-3 rounded-sm" />
+            <div className="aspect-square bg-white mb-3 rounded-[4px]" />
             <p className="text-white font-mono text-[16px]">{item.artist}</p>
             <p className="text-white font-mono text-[16px] mt-1">{item.track}</p>
           </button>
@@ -76,12 +74,10 @@ const Music = () => {
       <div className="max-w-2xl pl-0 pr-4 md:px-6 mr-auto md:mx-auto w-full">
         <div className="text-[16px] md:text-[20px] text-[#8F8F8F]">
           <p className="mb-8">
-            Sed ut <span className="font-bold text-[#8F8F8F]">perspiciatis</span> unde omnis iste
-            natus error sit.
+            I play guitar in a metal band called Vills. Heavy riffs, raw energy, and honest expression. It is where intensity meets creativity.
           </p>
           <p>
-            voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque
-            ipsa quae ab illo inventore veritatis.
+            For me, music and design are connected. Both are about rhythm, balance, tension, and feeling. Different mediums, same mindset.
           </p>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, SkipBack, SkipForward, Volume2 } from "lucide-react";
+import { SkipBack, SkipForward, Volume2 } from "lucide-react";
 
 export type TrackItem = { artist: string; track: string; src?: string };
 
@@ -117,7 +117,7 @@ export const MusicPlayer = ({
         max={100}
         value={progress}
         onChange={handleSeek}
-        className="flex-1 min-w-0 h-1 accent-white/80 bg-neutral-600 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer"
+        className="flex-1 min-w-0 h-1 accent-white/80 bg-neutral-600 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-[50%] [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer"
       />
       <span className="text-neutral-500 text-xs w-7 md:w-8 tabular-nums text-right shrink-0">
         {duration ? formatTime(duration) : "0:00"}
@@ -127,8 +127,8 @@ export const MusicPlayer = ({
 
   const nowPlaying = (
     <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1 md:flex-initial md:min-w-[180px]">
-      <div className="w-10 h-10 md:w-14 md:h-14 bg-neutral-700 shrink-0 flex items-center justify-center">
-        <div className="w-full h-full bg-white/10" />
+      <div className="w-10 h-10 md:w-14 md:h-14 bg-neutral-700 shrink-0 flex items-center justify-center rounded-[4px] overflow-hidden">
+        <div className="w-full h-full bg-white/10 rounded-[4px]" />
       </div>
       <div className="min-w-0 flex-1">
         <p className="text-white font-medium text-xs md:text-sm truncate">{currentTrack.track}</p>
@@ -151,10 +151,19 @@ export const MusicPlayer = ({
       <button
         type="button"
         onClick={togglePlay}
-        className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition-transform shrink-0"
+        className="w-10 h-10 md:w-12 md:h-12 rounded-[50%] bg-white text-black flex items-center justify-center hover:scale-105 transition-transform shrink-0 overflow-hidden"
         aria-label={isPlaying ? "Pause" : "Play"}
       >
-        {isPlaying ? <Pause className="w-4 h-4 md:w-5 md:h-5" /> : <Play className="w-4 h-4 md:w-5 md:h-5 ml-0.5" />}
+        {isPlaying ? (
+          <svg className="w-5 h-5 md:w-6 md:h-6 rounded-[2px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <rect x="6" y="4" width="4" height="16" rx="1" />
+            <rect x="14" y="4" width="4" height="16" rx="1" />
+          </svg>
+        ) : (
+          <svg className="w-5 h-5 md:w-6 md:h-6 ml-0.5 rounded-[2px]" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        )}
       </button>
       <button
         type="button"
@@ -178,7 +187,7 @@ export const MusicPlayer = ({
         step={0.01}
         value={volume}
         onChange={(e) => setVolume(Number(e.target.value))}
-        className="w-20 h-1 accent-white/80 bg-neutral-600 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer"
+        className="w-20 h-1 accent-white/80 bg-neutral-600 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:rounded-[50%] [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer"
       />
     </div>
   );
