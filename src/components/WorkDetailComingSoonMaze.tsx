@@ -23,26 +23,28 @@ export function WorkDetailComingSoonMaze({ fillViewport = false }: WorkDetailCom
     >
       <div data-maze-cont>
         <div className="workdetail-maze-mbox">
-          <div data-maze-board className="workdetail-maze-board">
-            <div data-maze-player className="workdetail-maze-thingie">
-              <div className="workdetail-maze-emo" data-maze-emo>
-                🐱
+          <div className="workdetail-maze-board-wrap">
+            <div data-maze-board className="workdetail-maze-board">
+              <div data-maze-player className="workdetail-maze-thingie">
+                <div className="workdetail-maze-emo" data-maze-emo>
+                  🐱
+                </div>
               </div>
-            </div>
-            <div data-maze-home className="workdetail-maze-home">
-              <div className="workdetail-maze-emo">🐭</div>
-            </div>
-            <div className="workdetail-maze-barrier workdetail-maze-barrier--top" />
-            <div className="workdetail-maze-barrier workdetail-maze-barrier--bottom" />
-            <div className="workdetail-maze-level-row" aria-live="polite">
-              <p className="workdetail-maze-level text-sm text-muted-foreground font-mono md:text-base">
-                Level <span data-maze-level>1</span>
-              </p>
-              <div className="workdetail-maze-timer-inline">
-                <span className="workdetail-maze-timer-label">Time</span>
-                <span data-maze-timer className="workdetail-maze-timer-value tabular-nums">
-                  —
-                </span>
+              <div data-maze-home className="workdetail-maze-home">
+                <div className="workdetail-maze-emo">🐭</div>
+              </div>
+              <div className="workdetail-maze-barrier workdetail-maze-barrier--top" />
+              <div className="workdetail-maze-barrier workdetail-maze-barrier--bottom" />
+              <div className="workdetail-maze-level-row" aria-live="polite">
+                <p className="workdetail-maze-level text-sm text-muted-foreground font-mono md:text-base">
+                  Level <span data-maze-level>1</span>
+                </p>
+                <div className="workdetail-maze-timer-inline">
+                  <span className="workdetail-maze-timer-label">Time</span>
+                  <span data-maze-timer className="workdetail-maze-timer-value tabular-nums">
+                    —
+                  </span>
+                </div>
               </div>
             </div>
           </div>

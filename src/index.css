@@ -202,19 +202,93 @@
   height: 100%;
   min-height: 548px;
   background: hsl(var(--background));
-  display: grid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  /* Lets us cap maze width to the real column (more reliable than % alone). */
+  container-type: inline-size;
+  container-name: maze-mbox;
+}
+
+/* Logical 760×548 board; wrapper sets layout footprint so scale fits narrow viewports. */
+.workdetail-maze-board-wrap {
+  --maze-outer-w: min(760px, 100%);
+  position: relative;
+  flex-shrink: 0;
+  width: var(--maze-outer-w);
+  height: calc(var(--maze-outer-w) * 548 / 760);
+  box-sizing: border-box;
+  /* Board is 760×548 in layout coords; clip symmetrically around the scaled drawing. */
+  overflow: hidden;
 }
 
 .workdetail-maze-board {
   position: absolute;
+  left: 50%;
+  top: 50%;
   width: 760px;
   height: 548px;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  /* Pin logical grid center to wrap center, then scale — avoids top-left layout box hanging right (looked off-center). */
+  margin-left: -380px;
+  margin-top: -274px;
+  transform: scale(calc(var(--maze-outer-w) / 760));
+  transform-origin: center center;
+}
+
+/*
+ * Fluid maze below 1024px: phones in landscape were ≥768px wide and still got a 760px maze.
+ * svw/svh = small viewport (stable with mobile browser chrome; dvw/dvh can overshoot).
+ * DevTools still shows .workdetail-maze-board as 760×548 — that is logical grid size, not draw size.
+ */
+@media (max-width: 1023px) {
+  .workdetail-maze-game--fill-dvh .workdetail-maze-mbox {
+    min-height: 0;
+    overflow-x: hidden;
+  }
+
+  .workdetail-maze-game--fill-dvh .workdetail-maze-board-wrap {
+    /* Fallback only — JS sets --maze-outer-w from .workdetail-maze-mbox (svw is wider than the padded column). */
+    --maze-fit: min(
+      760px,
+      100%,
+      calc(100svw - 2.5rem),
+      calc((100svh - 340px) * 760 / 548)
+    );
+    --maze-outer-w: calc(var(--maze-fit) * 0.52);
+  }
+
+  .workdetail-maze-game:not(.workdetail-maze-game--fill-dvh) .workdetail-maze-board-wrap {
+    --maze-outer-w: min(760px, 100%, calc((100svw - 1.5rem) * 0.88));
+  }
+
+  @supports (width: 1cqw) {
+    .workdetail-maze-game--fill-dvh .workdetail-maze-board-wrap {
+      --maze-fit: min(
+        760px,
+        100%,
+        calc(100cqw - 0.5rem),
+        calc(100svw - 2.5rem),
+        calc((100svh - 340px) * 760 / 548)
+      );
+    }
+
+    .workdetail-maze-game:not(.workdetail-maze-game--fill-dvh) .workdetail-maze-board-wrap {
+      --maze-outer-w: min(
+        760px,
+        calc(100cqw - 0.5rem),
+        calc((100svw - 1.5rem) * 0.88)
+      );
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .workdetail-maze-board-wrap {
+    --maze-outer-w: 760px;
+  }
 }
 
 .workdetail-maze-level-row {

@@ -21,6 +21,10 @@ export function attachWorkDetailMazeGame(root: HTMLElement): () => void {
     return () => {};
   }
 
+  const mbox = root.querySelector<HTMLElement>(".workdetail-maze-mbox");
+  const boardWrap = root.querySelector<HTMLElement>(".workdetail-maze-board-wrap");
+  const mqDesktopMaze = window.matchMedia("(min-width: 1024px)");
+
   const timerEl = root.querySelector<HTMLElement>("[data-maze-timer]");
 
   const step = 40;
@@ -531,6 +535,42 @@ export function attachWorkDetailMazeGame(root: HTMLElement): () => void {
 
   rebuildMazeLevel();
 
+  /** Below 1024px, size from real .workdetail-maze-mbox — viewport CSS can’t match padded columns. */
+  const syncMazeScaleToContainer = () => {
+    if (!boardWrap || !mbox) return;
+    if (mqDesktopMaze.matches) {
+      boardWrap.style.removeProperty("--maze-outer-w");
+      return;
+    }
+    const cw = mbox.clientWidth;
+    const ch = mbox.clientHeight;
+    if (cw < 40 || ch < 40) return;
+    const inset = cw <= 420 ? 20 : 14;
+    const maxFromWidth = (cw - inset) * 0.72;
+    const maxFromHeight = ((ch - (cw <= 420 ? 32 : 20)) * 760) / 548;
+    let outer = Math.min(760, maxFromWidth, maxFromHeight);
+    outer = Math.floor(outer * 0.72);
+    outer = Math.min(outer, Math.floor(cw * 0.68));
+    boardWrap.style.setProperty("--maze-outer-w", `${Math.max(168, outer)}px`);
+  };
+
+  const onMazeLayoutViewportChange = () => {
+    window.requestAnimationFrame(syncMazeScaleToContainer);
+  };
+
+  let mazeResizeObserver: ResizeObserver | null = null;
+  if (typeof ResizeObserver !== "undefined" && mbox && boardWrap) {
+    mazeResizeObserver = new ResizeObserver(onMazeLayoutViewportChange);
+    mazeResizeObserver.observe(mbox);
+  }
+  onMazeLayoutViewportChange();
+  if (typeof mqDesktopMaze.addEventListener === "function") {
+    mqDesktopMaze.addEventListener("change", onMazeLayoutViewportChange);
+  } else {
+    mqDesktopMaze.addListener(onMazeLayoutViewportChange);
+  }
+  window.addEventListener("orientationchange", onMazeLayoutViewportChange);
+
   document.addEventListener("keydown", keys);
   bu.addEventListener("click", onBu);
   bd.addEventListener("click", onBd);
@@ -831,5 +871,13 @@ export function attachWorkDetailMazeGame(root: HTMLElement): () => void {
     if (rafId) {
       window.cancelAnimationFrame(rafId);
     }
+    mazeResizeObserver?.disconnect();
+    if (typeof mqDesktopMaze.removeEventListener === "function") {
+      mqDesktopMaze.removeEventListener("change", onMazeLayoutViewportChange);
+    } else {
+      mqDesktopMaze.removeListener(onMazeLayoutViewportChange);
+    }
+    window.removeEventListener("orientationchange", onMazeLayoutViewportChange);
+    boardWrap?.style.removeProperty("--maze-outer-w");
   };
 }

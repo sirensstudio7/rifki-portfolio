@@ -142,7 +142,7 @@ const Index = () => {
         <section className="mb-16">
           <div
             ref={aboutTextRef}
-            className="space-y-5 text-[14px] md:text-[17px] leading-[1.55] text-muted-foreground"
+            className="space-y-5 text-[17px] md:text-[18px] leading-[1.55] text-muted-foreground"
           >
             <p>
               I'm a <span className="text-foreground font-medium">Digital Product Designer</span> focused on helping brands and businesses grow in the digital space and achieve their goals through thoughtful design and strong visual direction. I care about <span className="text-foreground font-medium">clarity</span>, <span className="text-foreground font-medium">structure</span>, and the kind of precision where <span className="text-foreground font-medium">every pixel has a reason to exist</span>.

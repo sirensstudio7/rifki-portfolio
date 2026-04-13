@@ -55,8 +55,8 @@ export function WorkMazeFullscreenModal({ open, onClose }: WorkMazeFullscreenMod
           <X className="h-5 w-5" strokeWidth={2} aria-hidden />
         </button>
       </header>
-      <div className="min-h-0 flex-1 overflow-hidden px-4 py-3 md:px-6 md:py-4">
-        <div className="mx-auto h-full min-h-0 w-full max-w-3xl">
+      <div className="min-h-0 flex-1 overflow-hidden px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4">
+        <div className="mx-auto h-full min-h-0 w-full max-w-3xl max-md:max-w-full">
           <WorkDetailComingSoonMaze fillViewport />
         </div>
       </div>
